@@ -31,9 +31,11 @@ namespace Alea.UnitTests.Parsing
         public void ShouldTokenizeNumber(double number)
         {
             var s = number.ToString();
-            var token = new Tokenizer(s).CurrentToken;
+            var tokenizer = new Tokenizer(s);
+            var token = tokenizer.CurrentToken;
             Assert.Equal(TokenType.Constant, token.Type);
             Assert.Equal(s, token.Value);
+            Assert.Equal(TokenType.EOF, tokenizer.Peek().Type);
         }
 
         [Fact]

@@ -90,31 +90,31 @@ namespace Alea.Parsing
                     return new Token(TokenType.Constant, "100");
                 case 'h':
                     NextChar();
-                    return new Token(TokenType.TakeHigh);
+                    return new Token(TokenType.TakeHigh, new string(new[] {_char}));
                 case 'l':
                     NextChar();
-                    return new Token(TokenType.TakeLow);
+                    return new Token(TokenType.TakeLow, new string(new[] { _char }));
                 case 'd':
                     NextChar();
-                    return new Token(TokenType.Dice);
+                    return new Token(TokenType.Dice, new string(new[] { _char }));
                 case '(':
                     NextChar();
-                    return new Token(TokenType.ParenOpen);
+                    return new Token(TokenType.ParenOpen, "(");
                 case ')':
                     NextChar();
-                    return new Token(TokenType.ParenClose);
+                    return new Token(TokenType.ParenClose, ")");
                 case '*':
                     NextChar();
-                    return new Token(TokenType.OpMultiply);
+                    return new Token(TokenType.OpMultiply, "*");
                 case '/':
                     NextChar();
-                    return new Token(TokenType.OpDivide);
+                    return new Token(TokenType.OpDivide, "/");
                 case '+':
                     NextChar();
-                    return new Token(TokenType.OpAdd);
+                    return new Token(TokenType.OpAdd, "+");
                 case '-':
                     NextChar();
-                    return new Token(TokenType.OpSubtract);
+                    return new Token(TokenType.OpSubtract, "-");
                 default:
                     throw new ParseException($"Unexpected character: {_char}");
             }
