@@ -5,35 +5,59 @@ using Alea.Expressions;
 
 namespace Alea.Parsing
 {
-    public class Parser
+    /// <summary>
+    /// Handles the lexing and parsing of a dice notation expression into an
+    /// expression tree that can be evaluated.
+    /// </summary>
+    public static class Parser
     {
-        private readonly Tokenizer _tokenizer;
+        private static ConstantExpression DefaultExpression => new ConstantExpression(1);
 
-        private ConstantExpression DefaultExpression => new ConstantExpression(1);
-
-        public Parser(string expr)
-            : this(new Tokenizer(expr))
+        /// <summary>
+        /// Parse the given dice notation expression into an expression tree.
+        /// </summary>
+        /// <param name="expr">
+        /// A string containing the dice notation expression to be parsed.
+        /// </param>
+        /// <returns>
+        /// An expression tree representing the given dice notation.
+        /// </returns>
+        public static AleaExpression Parse(string expr)
         {
+            return Parse(new Tokenizer(expr), new Random());
         }
 
-        internal Parser(Tokenizer tokenizer)
+        /// <summary>
+        /// Parse the given dice notation expression into an expression tree,
+        /// using the given random number generator to provide values for all
+        /// dice rolls.
+        /// </summary>
+        /// <param name="expr">
+        /// A string containing the dice notation expression to be parsed.
+        /// </param>
+        /// <param name="rng">
+        /// A random number generator that will be used to provide values for
+        /// all dice rolls in the parsed expression.
+        /// </param>
+        /// <returns>
+        /// An expression tree representing the given dice notation.
+        /// </returns>
+        public static AleaExpression Parse(string expr, Random rng)
         {
-            _tokenizer = tokenizer;
+            return Parse(new Tokenizer(expr), rng);
         }
 
-        public AleaExpression Parse()
-        {
-            return Parse(new Random());
-        }
-
-        public AleaExpression Parse(Random rng)
+        private static AleaExpression Parse(Tokenizer tok, Random rng)
         {
             if (rng == null)
                 throw new ArgumentNullException(nameof(rng));
 
             var operands = new Stack<AleaExpression>();
             var operators = new Stack<Token>();
-            Token last = Token.EOF, cur = _tokenizer.CurrentToken;
+
+            Token last = Token.EOF,
+                  cur = tok.CurrentToken;
+
             while (cur.Type != TokenType.EOF)
             {
                 if (cur.Type == TokenType.Constant)
@@ -69,12 +93,12 @@ namespace Alea.Parsing
                         operands.Push(GetNode(operators.Pop(), operands, rng));
                     }
                     // The right operand of a take high/low expression is also optional with a default of 1
-                    if ((cur.Type == TokenType.TakeHigh || cur.Type == TokenType.TakeLow) && _tokenizer.Peek().Type != TokenType.Constant)
+                    if ((cur.Type == TokenType.TakeHigh || cur.Type == TokenType.TakeLow) && tok.Peek().Type != TokenType.Constant)
                         operands.Push(DefaultExpression);
                     operators.Push(cur);
                 }
                 last = cur;
-                cur = _tokenizer.NextToken();
+                cur = tok.NextToken();
             }
             while (operators.Count > 0)
             {
@@ -88,7 +112,7 @@ namespace Alea.Parsing
             return operands.Pop();
         }
 
-        private AleaExpression GetNode(Token op, Stack<AleaExpression> operands = null, Random rng = null)
+        private static AleaExpression GetNode(Token op, Stack<AleaExpression> operands = null, Random rng = null)
         {
             if (op.Type == TokenType.Constant)
             {
