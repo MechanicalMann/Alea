@@ -14,7 +14,7 @@ namespace Alea.Expressions
             Evaluator = evaluator;
         }
 
-        public override double GetValue()
+        public override double Evaluate()
         {
             return Evaluator(Left, Right);
         }

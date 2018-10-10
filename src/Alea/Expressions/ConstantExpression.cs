@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Alea.Parse;
+using Alea.Parsing;
 
 namespace Alea.Expressions
 {
@@ -19,7 +19,7 @@ namespace Alea.Expressions
             Value = value;
         }
 
-        public override double GetValue()
+        public override double Evaluate()
         {
             return Value;
         }

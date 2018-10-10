@@ -1,33 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Alea.Exceptions;
-using Alea.Parse;
+using Alea.Expressions;
 
-namespace Alea.Expressions
+namespace Alea.Parsing
 {
-    public class AleaExpressionBuilder
+    public class Parser
     {
         private readonly Tokenizer _tokenizer;
 
         private ConstantExpression DefaultExpression => new ConstantExpression(1);
 
-        public AleaExpressionBuilder(string expr)
+        public Parser(string expr)
             : this(new Tokenizer(expr))
         {
         }
 
-        internal AleaExpressionBuilder(Tokenizer tokenizer)
+        internal Parser(Tokenizer tokenizer)
         {
             _tokenizer = tokenizer;
         }
 
-        public AleaExpression Build()
+        public AleaExpression Parse()
         {
-            return Build(new Random());
+            return Parse(new Random());
         }
 
-        public AleaExpression Build(Random rng)
+        public AleaExpression Parse(Random rng)
         {
             if (rng == null)
                 throw new ArgumentNullException(nameof(rng));

@@ -7,7 +7,7 @@ namespace Alea.Expressions
     public class AddExpression : OperatorExpression
     {
         public AddExpression(AleaExpression left, AleaExpression right)
-            : base(left, right, (a, b) => a.GetValue() + b.GetValue())
+            : base(left, right, (a, b) => a.Evaluate() + b.Evaluate())
         {
         }
     }

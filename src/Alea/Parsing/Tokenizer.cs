@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Alea.Exceptions;
 
-namespace Alea.Parse
+namespace Alea.Parsing
 {
     internal class Tokenizer
     {

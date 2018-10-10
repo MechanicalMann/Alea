@@ -24,7 +24,7 @@ namespace Alea.Expressions
             TakeHigh = takeHigh;
         }
 
-        public override double GetValue()
+        public override double Evaluate()
         {
             var r = Dice.Roll();
             if (TakeHigh)

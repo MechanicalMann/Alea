@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Alea.Parse
+namespace Alea.Parsing
 {
     internal struct Token
     {
@@ -23,7 +23,7 @@ namespace Alea.Parse
             Type = type;
             Value = value;
             Precedence = 10 - (int)Type;
-            IsOperator = Operators.Contains(Type);
+            IsOperator = Operators.Contains(Type); // I am very lazy
             IsDice = Dice.Contains(Type);
         }
     }

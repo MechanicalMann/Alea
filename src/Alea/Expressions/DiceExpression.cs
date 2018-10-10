@@ -36,7 +36,7 @@ namespace Alea.Expressions
             }
         }
 
-        public override double GetValue()
+        public override double Evaluate()
         {
             return Roll().Sum();
         }

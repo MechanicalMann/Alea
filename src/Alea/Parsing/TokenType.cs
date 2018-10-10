@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Alea.Parse
+﻿namespace Alea.Parsing
 {
     /// <summary>
     /// Represents the type of a token emitted by the tokenizer.

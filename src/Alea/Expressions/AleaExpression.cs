@@ -19,6 +19,6 @@ namespace Alea.Expressions
         /// This does not preserve the rolls of any dice that are part of the
         /// expression. All dice will be rolled again on every call.
         /// </remarks>
-        public abstract double GetValue();
+        public abstract double Evaluate();
     }
 }
