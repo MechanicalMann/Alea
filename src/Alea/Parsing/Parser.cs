@@ -47,7 +47,7 @@ namespace Alea.Parsing
             return Parse(new Tokenizer(expr), rng);
         }
 
-        private static AleaExpression Parse(Tokenizer tok, Random rng)
+        internal static AleaExpression Parse(Tokenizer tok, Random rng)
         {
             if (rng == null)
                 throw new ArgumentNullException(nameof(rng));
@@ -112,7 +112,7 @@ namespace Alea.Parsing
             return operands.Pop();
         }
 
-        private static AleaExpression GetNode(Token op, Stack<AleaExpression> operands = null, Random rng = null)
+        internal static AleaExpression GetNode(Token op, Stack<AleaExpression> operands = null, Random rng = null)
         {
             if (op.Type == TokenType.Constant)
             {
