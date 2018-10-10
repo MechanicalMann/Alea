@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Alea.Exceptions;
 
+// Allow unit testing
+[assembly:System.Runtime.CompilerServices.InternalsVisibleTo("Alea.UnitTests")]
+
 namespace Alea.Parsing
 {
     internal class Tokenizer
@@ -11,6 +14,7 @@ namespace Alea.Parsing
         private Token _token;
 
         private int _pos = -1;
+        private int _last = Int32.MinValue;
 
         private readonly string _input;
 
@@ -18,7 +22,7 @@ namespace Alea.Parsing
 
         internal Tokenizer(string input)
         {
-            _input = input;
+            _input = input ?? throw new ArgumentNullException(nameof(input));
             NextChar();
             NextToken();
         }
@@ -43,14 +47,6 @@ namespace Alea.Parsing
             return _input[pos];
         }
 
-        internal IEnumerable<Token> Tokenize()
-        {
-            do
-            {
-                yield return _token;
-            } while (_token.Type != TokenType.EOF);
-        }
-
         internal Token NextToken()
         {
             _token = GetToken();
@@ -59,9 +55,12 @@ namespace Alea.Parsing
 
         public Token Peek()
         {
-            var pos = _pos--;
+            if (_char <= 0)
+                return new Token(TokenType.EOF);
+
+            var prev = _last - 1;
             var peek = NextToken();
-            _pos = pos;
+            _pos = prev;
             NextChar();
             NextToken();
             return peek;
@@ -71,6 +70,9 @@ namespace Alea.Parsing
         {
             if (_char <= 0)
                 return new Token(TokenType.EOF);
+            
+            _last = _pos;// Keep a history of the starting position of the last token read
+
             if (Char.IsDigit(_char) || (_char == '-' && Char.IsDigit(Read(_pos + 1))))
             {
                 var sb = new StringBuilder();
