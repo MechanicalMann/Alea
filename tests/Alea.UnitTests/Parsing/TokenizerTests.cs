@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Alea.Exceptions;
 using Xunit;
+using Alea.Exceptions;
 using Alea.Parsing;
 
 namespace Alea.UnitTests.Parsing
