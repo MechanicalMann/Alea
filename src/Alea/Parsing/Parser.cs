@@ -102,7 +102,10 @@ namespace Alea.Parsing
             }
             while (operators.Count > 0)
             {
-                operands.Push(GetNode(operators.Pop(), operands, rng));
+                var op = operators.Pop();
+                if (op.Type == TokenType.ParenOpen)
+                    throw new SyntaxException("mismatched parentheses (open missing a close)");
+                operands.Push(GetNode(op, operands, rng));
             }
 
             // By resolving all operators and tokens, there can only be one, the AST that we've built

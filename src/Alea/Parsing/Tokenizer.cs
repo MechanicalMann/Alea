@@ -27,12 +27,12 @@ namespace Alea.Parsing
             NextToken();
         }
 
-        private void NextChar()
+        private void NextChar(bool skipWhitespace = true)
         {
             do
             {
                 _char = Read();
-            } while (Char.IsWhiteSpace(_char));
+            } while (skipWhitespace && Char.IsWhiteSpace(_char));
         }
 
         private char Read()
@@ -79,8 +79,13 @@ namespace Alea.Parsing
                 do
                 {
                     sb.Append(_char);
-                    NextChar();
+                    NextChar(false);
                 } while (Char.IsDigit(_char) || _char == '.');
+
+                // Whitespace denotes the edge of a number
+                if (Char.IsWhiteSpace(_char))
+                    NextChar();
+
                 return new Token(TokenType.Constant, sb.ToString());
             }
             switch (Char.ToLowerInvariant(_char))

@@ -128,5 +128,127 @@ namespace Alea.UnitTests.Parsing
         }
 
         #endregion
+
+        #region Parse
+
+        [Fact]
+        public void ShouldParseSimpleExpression()
+        {
+            var expr = Parser.Parse("1");
+            Assert.IsAssignableFrom<ConstantExpression>(expr);
+        }
+
+        [Fact]
+        public void ShouldParseSimpleParentheses()
+        {
+            var expr = Parser.Parse("(1)");
+            Assert.IsAssignableFrom<ConstantExpression>(expr);
+        }
+
+        [Fact]
+        public void ShouldParseDiceExpression()
+        {
+            var expr = Parser.Parse("1d20");
+            Assert.IsAssignableFrom<DiceExpression>(expr);
+        }
+
+        [Theory]
+        [InlineData("1 + 1")]
+        [InlineData("1 - 1")]
+        [InlineData("1 * 1")]
+        [InlineData("1 / 1")]
+        public void ShouldParseBasicOperators(string s)
+        {
+            var expr = Parser.Parse(s);
+            Assert.IsAssignableFrom<OperatorExpression>(expr);
+        }
+
+        [Theory]
+        [InlineData("6d6H4", true, 4)]
+        [InlineData("4d10L2", false, 2)]
+        public void ShouldParseTakeDiceExpressions(string s, bool takeHigh, int taken)
+        {
+            var expr = Parser.Parse(s);
+            Assert.IsAssignableFrom<TakeDiceExpression>(expr);
+
+            var tde = (TakeDiceExpression)expr;
+            Assert.Equal(takeHigh, tde.TakeHigh);
+            Assert.Equal(taken, tde.Take);
+        }
+
+        [Fact]
+        public void ShouldAddDefaultParamToDice()
+        {
+            var expr = Parser.Parse("d20");
+            Assert.IsAssignableFrom<DiceExpression>(expr);
+
+            var de = (DiceExpression)expr;
+            Assert.Equal(1, de.Number);
+            Assert.Equal(20, de.Sides);
+        }
+
+        [Fact]
+        public void ShouldAddDefaultParamToTakeDice()
+        {
+            var expr = Parser.Parse("2d20H");
+            Assert.IsAssignableFrom<TakeDiceExpression>(expr);
+
+            var tde = (TakeDiceExpression)expr;
+            Assert.Equal(1, tde.Take);
+        }
+
+        [Fact]
+        public void ShouldParseComplexParentheses()
+        {
+            var expr = Parser.Parse("(((1+2)+3+(4+5))+6+(7+8)+9)+10");
+            Assert.IsAssignableFrom<AddExpression>(expr);
+
+            var val = expr.Evaluate();
+            Assert.Equal(55, val);
+        }
+
+        [Theory]
+        [InlineData("3 * 3 + 3", 12)]
+        [InlineData("3 + 3 * 3", 12)]
+        [InlineData("3 / 3 - 3", -2)]
+        [InlineData("3 - 3 / 3",  2)]
+        [InlineData("3 + 6 * (5 + 4) / 3 - 7",  14)]
+        public void ShouldFollowOperatorPrecedence(string e, double result)
+        {
+            var expr = Parser.Parse(e);
+            Assert.Equal(result, expr.Evaluate());
+        }
+
+        [Fact]
+        public void ShouldThrowForNullRNG()
+        {
+            Assert.Throws<ArgumentNullException>(() => Parser.Parse("1", null));
+        }
+
+        [Fact]
+        public void ShouldThrowForEmptyParentheses()
+        {
+            Assert.Throws<SyntaxException>(() => Parser.Parse("()"));
+        }
+
+        [Fact]
+        public void ShouldThrowForMismatchedCloseParen()
+        {
+            Assert.Throws<SyntaxException>(() => Parser.Parse(")"));
+        }
+
+        [Fact]
+        public void ShouldThrowForMismatchedOpenParen()
+        {
+            Assert.Throws<SyntaxException>(() => Parser.Parse("("));
+        }
+
+        [Fact]
+        public void ShouldThrowForUnbalancedExpression()
+        {
+            Assert.Throws<SyntaxException>(() => Parser.Parse("1 2"));
+        }
+
+        #endregion
     }
 }
